@@ -1,3 +1,5 @@
+import re
+
 import requests
 from bs4 import BeautifulSoup
 import datetime
@@ -8,6 +10,7 @@ from send_email import send_email
 
 ref_date = dt.now() - datetime.timedelta(days=2)
 career_url = 'http://career.snu.ac.kr/student/employment/list.jsp?page={page}&category_code=3'
+career_detail_url = 'http://career.snu.ac.kr/student/employment/view.jsp?category_code=3&no={no}'
 cse_url = 'https://cse.snu.ac.kr/department-notices?page={page}'
 cse_page_url = 'https://cse.snu.ac.kr{path}'
 
@@ -23,12 +26,16 @@ def get_career_data(page, text):
 
     for data in datas:
         lines = data.find_all("td")
+        onclick = lines[1].find("a").attrs["onclick"]
+        nums = re.findall(r'\d+', onclick)
+        no = nums[1]
+        link = career_detail_url.format(no=no)
         title = lines[1].get_text()
         upload_date = lines[2].get_text()
         upload_date = dt.strptime(upload_date, "%Y-%m-%d")
         until = lines[3].get_text()
         if upload_date >= ref_date:
-            text.append(f'{title} 기한: {until}\n')
+            text.append(f'{title} 기한: {until} {link}\n')
         else:
             return -1
         # try:
