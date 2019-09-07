@@ -6,7 +6,7 @@ from datetime import datetime as dt
 import get_specific_page as get_page
 from send_email import send_email
 
-ref_date = dt.now()
+ref_date = dt.now() - datetime.timedelta(days=2)
 career_url = 'http://career.snu.ac.kr/student/employment/list.jsp?page={page}&category_code=3'
 cse_url = 'https://cse.snu.ac.kr/department-notices?page={page}'
 cse_page_url = 'https://cse.snu.ac.kr{path}'
